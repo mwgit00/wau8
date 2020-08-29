@@ -35,28 +35,42 @@ extern "C" {
 #include <stdint.h>
 
 #define WAU8_KEY_SZ             (8U)
-#define WAU8_ALL_WHEEL_SZ       (1981U)
 
 
 typedef const uint8_t (*wau8_key_t)[WAU8_KEY_SZ];
-typedef const uint8_t (*wau8_wheels_t)[WAU8_ALL_WHEEL_SZ];
 
 typedef struct
 {
-    uint8_t pos[WAU8_KEY_SZ];
-    wau8_wheels_t wheels;
+    uint8_t a[256];
+    uint8_t b[253];
+    uint8_t c[251];
+    uint8_t d[249];
+    uint8_t e[247];
+    uint8_t f[245];
+    uint8_t g[241];
+    uint8_t h[239];
+} wau8_wheels_t;
+
+typedef struct
+{
+    uint8_t posa;
+    uint8_t posb;
+    uint8_t posc;
+    uint8_t posd;
+    uint8_t pose;
+    uint8_t posf;
+    uint8_t posg;
+    uint8_t posh;
+    const wau8_wheels_t * pwheels;
 } wau8_context_t;
 
 
-extern const uint8_t WAU8_WHEEL_SZ[WAU8_KEY_SZ];
-extern const uint16_t WAU8_WHEEL_OFFSET[WAU8_KEY_SZ];
+extern const uint16_t WAU8_WHEEL_SZ[WAU8_KEY_SZ];
 
 
 void wau8_set_key(wau8_context_t * pcontext, const wau8_key_t pkey);
-void wau8_set_wheels(wau8_context_t* pcontext, const wau8_wheels_t pwheels);
-
+void wau8_set_wheels(wau8_context_t* pcontext, const wau8_wheels_t * pwheels);
 uint8_t wau8_advance(wau8_context_t * pcontext);
-
 uint8_t wau8_get_val(const wau8_context_t * pcontext);
 
 #ifdef __cplusplus

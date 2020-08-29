@@ -97,23 +97,6 @@ void dump_tables(void)
     int zz;
 
     zz = 0;
-    for (ii = 0; ii < WAU8_KEY_SZ; ii++)
-    {
-        printf("%iU, ", zz);
-        jjmax = (ii == 0) ? 256 : WAU8_WHEEL_SZ[ii];
-        zz += jjmax;
-    }
-    printf("\n");
-
-    zz = 0;
-    for (ii = 1; ii < WAU8_KEY_SZ; ii++)
-    {
-        printf("%iU, ", zz);
-        zz += WAU8_WHEEL_SZ[ii];
-    }
-    printf("\n");
-
-    zz = 0;
     for (ii = 1; ii < WAU8_KEY_SZ; ii++)
     {
         nn = 0;
@@ -164,7 +147,7 @@ void wau8xN_apply(
             if (zeropos == 0)
             {
                 // first wheel set is always advanced
-                // additional wheel set is advanced
+                // next wheel set is advanced
                 // if previous wheel set rolled over to pos 0
                 zeropos = wau8_advance(&pcon[ii]);
             }
@@ -176,64 +159,41 @@ void wau8xN_apply(
 }
 
 
-void null_test(void)
+void set_rand_wheels(unsigned int seed)
 {
+    srand(seed);
+    for (int ii = 0; ii < 2; ii++)
+    {
+        for (int nn = 0; nn < WAU8_WHEEL_SZ[0]; nn++) rand_wheels[ii].a[nn] = rand();
+        for (int nn = 0; nn < WAU8_WHEEL_SZ[1]; nn++) rand_wheels[ii].b[nn] = rand();
+        for (int nn = 0; nn < WAU8_WHEEL_SZ[2]; nn++) rand_wheels[ii].c[nn] = rand();
+        for (int nn = 0; nn < WAU8_WHEEL_SZ[3]; nn++) rand_wheels[ii].d[nn] = rand();
+        for (int nn = 0; nn < WAU8_WHEEL_SZ[4]; nn++) rand_wheels[ii].e[nn] = rand();
+        for (int nn = 0; nn < WAU8_WHEEL_SZ[5]; nn++) rand_wheels[ii].f[nn] = rand();
+        for (int nn = 0; nn < WAU8_WHEEL_SZ[6]; nn++) rand_wheels[ii].g[nn] = rand();
+        for (int nn = 0; nn < WAU8_WHEEL_SZ[7]; nn++) rand_wheels[ii].h[nn] = rand();
+    }
+}
+
+
+void wau8_test(const wau8_wheels_t * pw)
+{
+    // test two wau8 blocks daisy-chained together for a "128 bit" cipher
+
     wau8_context_t con[2];
     const uint8_t key[2][WAU8_KEY_SZ] =
     {
-        { 255,252,250,248,246,244,240,238 },
+        { 255,252,250,248,246,244,240,238 },    // rolls over at next advance
         { 0,1,2,3,4,5,6,7 },
     };
 
     char atxt[TEST_BUFF_SZ] = "Hello world!";
     char btxt[TEST_BUFF_SZ];
 
-    wau8_set_wheels(&con[0], &null_wheels[0]);
-    wau8_set_wheels(&con[1], &null_wheels[1]);
+    wau8_set_wheels(&con[0], &pw[0]);
+    wau8_set_wheels(&con[1], &pw[1]);
 
-    printf("\n---- NULL ----\n");
-    printf("ENCRYPT\n");
-    memset(btxt, 0, sizeof(btxt));
-    wau8_set_key(&con[0], &key[0]);
-    wau8_set_key(&con[1], &key[1]);
-    wau8xN_apply(con, 2, atxt, btxt, TEST_BUFF_SZ);
-    printf("PLAIN:  %s\n", atxt);
-    printf("CIPHER: %s\n", btxt);
-
-    printf("DECRYPT\n");
-    memset(atxt, 0, sizeof(atxt));
-    wau8_set_key(&con[0], &key[0]);
-    wau8_set_key(&con[1], &key[1]);
-    wau8xN_apply(con, 2, btxt, atxt, TEST_BUFF_SZ);
-    printf("PLAIN:  %s\n", atxt);
-}
-
-
-void rand_test(void)
-{
-    wau8_context_t con[2];
-    const uint8_t key[2][WAU8_KEY_SZ] =
-    {
-        { 255,252,250,248,246,244,240,238 },
-        { 0,1,2,3,4,5,6,7 },
-    };
-
-    char atxt[32] = "Hello world!";
-    char btxt[32];
-
-    srand(12345U);
-    for (int ii = 0; ii < 2; ii++)
-    {
-        for (int jj = 0; jj < WAU8_ALL_WHEEL_SZ; jj++)
-        {
-            rand_wheels[ii][jj] = rand() & 0xFFU;
-        }
-    }
-
-    wau8_set_wheels(&con[0], &rand_wheels[0]);
-    wau8_set_wheels(&con[1], &rand_wheels[1]);
-
-    printf("\n---- RAND ----\n");
+    printf("\n----\n");
     printf("ENCRYPT\n");
     memset(btxt, 0, sizeof(btxt));
     wau8_set_key(&con[0], &key[0]);
@@ -258,13 +218,17 @@ void rand_test(void)
 
 int main(int argc, char* argv[])
 {
-    // test two wau8 daisy-chained together for a "128 bit" cipher
+    // "null" wheels are all 0 so ciphertext will equal plaintext and vice versa
     
-    // wheels are all 0 so ciphertext will equal plaintext and vice versa
-    null_test();
+    wau8_test(null_wheels);
     
-    // wheels are random so encryption/decryption will be performed
-    rand_test();
+    // use random wheels to perform encryption/decryption
     
+    set_rand_wheels(12345U);
+    wau8_test(rand_wheels);
+    
+    set_rand_wheels(54321U);
+    wau8_test(rand_wheels);
+
     return 0;
 }

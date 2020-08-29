@@ -27,14 +27,52 @@
 
 #include "mywheels.h"
 
-const uint8_t null_wheels[2][WAU8_ALL_WHEEL_SZ] =
+const wau8_wheels_t null_wheels[2] =
 {
-    { 0 },
-    { 0 }
+    {
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+    },
+
+    {
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+    },
 };
 
-uint8_t rand_wheels[2][WAU8_ALL_WHEEL_SZ] =
+wau8_wheels_t rand_wheels[2] =
 {
-    { 0 },
-    { 0 }
+    {
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+    },
+
+    {
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+        { 0 },
+    },
 };
