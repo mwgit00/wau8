@@ -23,7 +23,7 @@
 // 
 // For more information, please refer to <https://unlicense.org>
 
-// Released to public domain by Mark Whitney 2020
+// Mark Whitney 2020
 
 #include <stdio.h>
 #include <string.h>
@@ -32,92 +32,6 @@
 #include "mywheels.h"
 
 #define TEST_BUFF_SZ    (32U)
-
-#if 0
-#define SANITY_SZ   (64768) // 256 * 253 = 64768
-uint8_t arr[65536];
-void sanity_check(void)
-{
-    int ii;
-    uint8_t ct[2];
-    ct[0] = 0;
-    ct[1] = 0;
-    memset(arr, 0, sizeof(arr));
-
-    // do a two-wheel test for wheel 256 and wheel 253
-    // record how many times each position combo occurs
-    for (ii = 0; ii < SANITY_SZ; ii++)
-    {
-        int idx = (ct[0] * 256) + ct[1];
-        arr[idx]++;
-        ct[0]++;
-        ct[1] = (ct[1] + 1) % 253;
-    }
-    
-    for (ii = 0; ii < 65536; ii++)
-    {
-        if ((ii & 0xFF) >= 253)
-        {
-            // there should be no occurrences where low byte >= 253
-            if (arr[ii] != 0)
-            {
-                break;
-            }
-        }
-        else
-        {
-            // everything else should occur only once
-            if (arr[ii] != 1)
-            {
-                break;
-            }
-        }
-    }
-    
-    if (ii == 65536)
-    {
-        printf("NOT INSANE\n");
-    }
-    else
-    {
-        printf("INSANE\n");
-    }
-}
-#endif
-
-
-#if 0
-// code that was used for creating tables
-void dump_tables(void)
-{
-    int ii;
-    int jj;
-    int jjmax;
-    int nn;
-    int zz;
-
-    zz = 0;
-    for (ii = 1; ii < WAU8_KEY_SZ; ii++)
-    {
-        nn = 0;
-        printf("// wheel %u\n", WAU8_WHEEL_SZ[ii]);
-        for (jj = 0; jj < WAU8_WHEEL_SZ[ii]; jj++)
-        {
-            printf("%iU,", (jj + 1) % WAU8_WHEEL_SZ[ii]);
-            if (((nn + 1) % 15) == 0)
-            {
-                printf("\n");
-            }
-            nn++;
-            zz++;
-        }
-        printf("\n");
-    }
-    
-    printf("%i\n", zz);
-    printf("%i\n", zz + 256);
-}
-#endif
 
 
 // perform encryption/decryption with daisy-chained wau8 blocks

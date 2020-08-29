@@ -23,7 +23,7 @@
 // 
 // For more information, please refer to <https://unlicense.org>
 
-// Released to public domain by Mark Whitney 2020
+// Mark Whitney 2020
 
 #include "mywheels.h"
 

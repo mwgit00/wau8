@@ -23,7 +23,7 @@
 // 
 // For more information, please refer to <https://unlicense.org>
 
-// Released to public domain by Mark Whitney 2020
+// Mark Whitney 2020
 
 #include "wau8.h"
 
@@ -53,13 +53,6 @@ const uint16_t WAU8_WHEEL_SZ[WAU8_KEY_SZ] =
     245U,   // 245 (5x7x7)
     241U,   // 241 (prime)
     239U    // 239 (prime)
-};
-
-
-// offsets for each wheel in monolithic wheel table
-const uint16_t WAU8_WHEEL_OFFSET[WAU8_KEY_SZ] =
-{
-    0U, 256U, 509U, 760U, 1009U, 1256U, 1501U, 1742U
 };
 
 
@@ -212,6 +205,7 @@ static const wau8_cheats_t WAU8_CHEATS =
 
 
 // set initial wheel positions (the key)
+// do modulo operations to prevent key value from exceeding wheel size
 void wau8_set_key(wau8_context_t* pcontext, const wau8_key_t pkey)
 {
     pcontext->posa = (*pkey)[0];

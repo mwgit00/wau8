@@ -23,7 +23,7 @@
 // 
 // For more information, please refer to <https://unlicense.org>
 
-// Released to public domain by Mark Whitney 2020
+// Mark Whitney 2020
 
 #ifndef WAU8_H_
 #define WAU8_H_
