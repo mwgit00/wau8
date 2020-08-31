@@ -30,8 +30,8 @@
 
 #include "wau8.h"
 
-extern const wau8_wheels_t null_wheels[2];
+extern const wau8_wheels_t null_wheels;
 
-extern wau8_wheels_t rand_wheels[2];
+extern wau8_wheels_t rand_wheels;
 
 #endif // MYWHEELS_H_

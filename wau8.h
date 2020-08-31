@@ -70,7 +70,7 @@ extern const uint16_t WAU8_WHEEL_SZ[WAU8_KEY_SZ];
 
 void wau8_set_key(wau8_context_t * pcontext, const wau8_key_t pkey);
 void wau8_set_wheels(wau8_context_t* pcontext, const wau8_wheels_t * pwheels);
-uint8_t wau8_advance(wau8_context_t * pcontext);
+void wau8_advance(wau8_context_t * pcontext);
 uint8_t wau8_get_val(const wau8_context_t * pcontext);
 
 #ifdef __cplusplus

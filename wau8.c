@@ -58,7 +58,7 @@ const uint16_t WAU8_WHEEL_SZ[WAU8_KEY_SZ] =
 
 // cheat table for incrementing wheel position and handling
 // wraparound without having to do modulo or use an if-block
-// wheel 256 has no table since it rolls over from 0 to 255 automatically
+// wheel 256 has no table since it rolls over from 255 to 0 automatically
 static const wau8_cheats_t WAU8_CHEATS =
 {
 // wheel 253
@@ -226,12 +226,8 @@ void wau8_set_wheels(wau8_context_t* pcontext, const wau8_wheels_t * pwheels)
 
 
 // advance the wheels
-// return 0 when all positions are at 0
-// this allows daisy-chaining multiple wau8 blocks together
-uint8_t wau8_advance(wau8_context_t * pcontext)
+void wau8_advance(wau8_context_t * pcontext)
 {
-    uint8_t zeropos;
-
     // increment positions and perform wraparound
     pcontext->posa++;
     pcontext->posb = WAU8_CHEATS.b[pcontext->posb];
@@ -241,19 +237,6 @@ uint8_t wau8_advance(wau8_context_t * pcontext)
     pcontext->posf = WAU8_CHEATS.f[pcontext->posf];
     pcontext->posg = WAU8_CHEATS.g[pcontext->posg];
     pcontext->posg = WAU8_CHEATS.h[pcontext->posh];
-
-    // bitwise-OR returns 0 when all positions are at 0
-    zeropos =
-        pcontext->posa |
-        pcontext->posb |
-        pcontext->posc |
-        pcontext->posd |
-        pcontext->pose |
-        pcontext->posf |
-        pcontext->posg |
-        pcontext->posh;
-
-    return zeropos;
 }
 
 
