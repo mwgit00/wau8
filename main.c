@@ -31,7 +31,61 @@
 #include "wau8.h"
 #include "mywheels.h"
 
-#define TEST_BUFF_SZ    (32U)
+#define TEST_BUFF_SZ    (16U)
+
+
+#define XWHEELCT (4U)
+uint8_t xbuff[262144];
+
+void sanity_check(void)
+{
+    size_t ii;
+    size_t jj;
+    
+    // declare some relatively prime wheel sizes
+    // and number of bits needed to store each wheel size
+    // total bits is 18; 2^18 is 262144
+    // expected number of wheel pos combos is product of wheel sizes
+    const int xrp[XWHEELCT] = { 14 /* 2x7 */, 15 /* 3x5 */, 23, 29 };
+    const int xbits[XWHEELCT] = { 4,4,5,5 };
+    const int ncombos = xrp[0] * xrp[1] * xrp[2] * xrp[3];
+
+    // init wheel positions and flag buffer
+    int xct[XWHEELCT] = { 0,0,0,0 };
+    memset(xbuff, 0, sizeof(xbuff));
+
+    // loop through expected number of combos
+    for (jj = 0; jj < ncombos; jj++)
+    {
+        // create index based on wheel positions
+        int ix = 0;
+        for (ii = 0; ii < XWHEELCT; ii++)
+        {
+            ix <<= xbits[ii];
+            ix += xct[ii];
+        }
+        
+        // flag each occurrence of index
+        xbuff[ix] = 1;
+
+        // advance the wheels
+        for (ii = 0; ii < XWHEELCT; ii++)
+        {
+            xct[ii] = (xct[ii] + 1) % xrp[ii];
+        }
+    }
+
+    // count number of times each index was flagged
+    int nflags = 0;
+    for (jj = 0; jj < sizeof(xbuff); jj++)
+    {
+        if (xbuff[jj] > 0) nflags++;
+    }
+
+    // number of flagged indexes
+    // should equal number of expected combos
+    printf("%i %i\n", ncombos, nflags);
+}
 
 
 // perform encryption/decryption
@@ -92,7 +146,7 @@ void wau8_test(const wau8_wheels_t * pw)
     process_message(&con, atxt, btxt, TEST_BUFF_SZ);
     printf("PLAIN:  %s\n", atxt);
     printf("CIPHER:");
-    for (int ii = 0; ii < 32; ii++)
+    for (int ii = 0; ii < TEST_BUFF_SZ; ii++)
     {
         printf(" %02X", btxt[ii] & 0xFF);
     }
@@ -108,16 +162,21 @@ void wau8_test(const wau8_wheels_t * pw)
 
 int main(int argc, char* argv[])
 {
+    sanity_check();
+    
     // "null" wheels are all 0 so ciphertext will equal plaintext and vice versa
     
     wau8_test(&null_wheels);
     
     // use random wheels to perform encryption/decryption
     
-    set_rand_wheels(12345U);
+    set_rand_wheels(01234U);
     wau8_test(&rand_wheels);
 
-    set_rand_wheels(54321U);
+    set_rand_wheels(56789U);
+    wau8_test(&rand_wheels);
+
+    set_rand_wheels(98765U);
     wau8_test(&rand_wheels);
 
     return 0;
